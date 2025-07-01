@@ -228,7 +228,7 @@ class ImprovedMarineAccidentClassifier:
         plt.ylabel('True Severity')
         plt.xlabel('Predicted Severity')
         plt.tight_layout()
-        plt.savefig('improved_marine_accident_confusion_matrix.png', dpi=300, bbox_inches='tight')
+        plt.savefig('figures/improved_marine_accident_confusion_matrix.png', dpi=300, bbox_inches='tight')
         plt.show()
         
         return accuracy
@@ -237,8 +237,8 @@ class ImprovedMarineAccidentClassifier:
         """Save the trained model"""
         import joblib
         
-        joblib.dump(self.vectorizer, f'{filepath_prefix}_vectorizer.pkl')
-        joblib.dump(self.model, f'{filepath_prefix}_model.pkl')
+        joblib.dump(self.vectorizer, f'models/{filepath_prefix}_vectorizer.pkl')
+        joblib.dump(self.model, f'models/{filepath_prefix}_model.pkl')
         print("Model saved successfully!")
     
     def load_model(self, filepath_prefix):
@@ -246,8 +246,8 @@ class ImprovedMarineAccidentClassifier:
         import joblib
         
         try:
-            self.vectorizer = joblib.load(f'{filepath_prefix}_vectorizer.pkl')
-            self.model = joblib.load(f'{filepath_prefix}_model.pkl')
+            self.vectorizer = joblib.load(f'models/{filepath_prefix}_vectorizer.pkl')
+            self.model = joblib.load(f'models/{filepath_prefix}_model.pkl')
             print("Model loaded successfully!")
         except:
             print("Model files not found!")

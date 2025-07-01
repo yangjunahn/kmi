@@ -294,15 +294,15 @@ class BERTMarineAccidentClassifier:
         plt.ylabel('True Severity')
         plt.xlabel('Predicted Severity')
         plt.tight_layout()
-        plt.savefig('bert_marine_accident_confusion_matrix.png', dpi=300, bbox_inches='tight')
+        plt.savefig('figures/bert_marine_accident_confusion_matrix.png', dpi=300, bbox_inches='tight')
         plt.show()
         
         return accuracy
     
     def save_model(self, filepath_prefix):
         """Save the trained BERT model"""
-        torch.save(self.classifier.state_dict(), f'{filepath_prefix}_bert_model.pth')
-        self.tokenizer.save_pretrained(f'{filepath_prefix}_bert_tokenizer')
+        torch.save(self.classifier.state_dict(), f'models/{filepath_prefix}_bert_model.pth')
+        self.tokenizer.save_pretrained(f'models/{filepath_prefix}_bert_tokenizer')
         print("BERT model saved successfully!")
     
     def load_model(self, filepath_prefix):
@@ -312,7 +312,7 @@ class BERTMarineAccidentClassifier:
             self.model = AutoModel.from_pretrained(self.model_name)
             
             self.classifier = BERTClassifier(self.model, num_classes=3)
-            self.classifier.load_state_dict(torch.load(f'{filepath_prefix}_bert_model.pth', map_location=self.device))
+            self.classifier.load_state_dict(torch.load(f'models/{filepath_prefix}_bert_model.pth', map_location=self.device))
             self.classifier.to(self.device)
             print("BERT model loaded successfully!")
         except:

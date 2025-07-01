@@ -300,8 +300,8 @@ class MarineAccidentClassifier:
         
         # Save TF-IDF model
         if self.tfidf_model is not None:
-            joblib.dump(self.tfidf_vectorizer, f'{filepath_prefix}_tfidf_vectorizer.pkl')
-            joblib.dump(self.tfidf_model, f'{filepath_prefix}_tfidf_model.pkl')
+                    joblib.dump(self.tfidf_vectorizer, f'models/{filepath_prefix}_tfidf_vectorizer.pkl')
+        joblib.dump(self.tfidf_model, f'models/{filepath_prefix}_tfidf_model.pkl')
             print("TF-IDF models saved successfully!")
         
         # Save BERT model
@@ -316,8 +316,8 @@ class MarineAccidentClassifier:
         
         # Load TF-IDF model
         try:
-            self.tfidf_vectorizer = joblib.load(f'{filepath_prefix}_tfidf_vectorizer.pkl')
-            self.tfidf_model = joblib.load(f'{filepath_prefix}_tfidf_model.pkl')
+            self.tfidf_vectorizer = joblib.load(f'models/{filepath_prefix}_tfidf_vectorizer.pkl')
+            self.tfidf_model = joblib.load(f'models/{filepath_prefix}_tfidf_model.pkl')
             print("TF-IDF models loaded successfully!")
         except:
             print("TF-IDF models not found!")

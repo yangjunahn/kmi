@@ -36,6 +36,9 @@ marine_accident_env/
 *.onnx
 *.pt
 
+# Model folders
+models/
+
 # Jupyter Notebook
 .ipynb_checkpoints
 
