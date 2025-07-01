@@ -61,4 +61,9 @@ Thumbs.db
 
 # Temporary files
 *.tmp
-*.temp 
+*.temp
+
+# Presentation files
+PRESENTATION_CONTENT.md
+figures/model_comparison_results.py
+figures/*.png 
