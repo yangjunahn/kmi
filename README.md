@@ -4,6 +4,19 @@
 
 This project implements an AI model for classifying marine accident severity based on accident descriptions. The system can predict whether a marine accident is of "low", "medium", or "high" severity and provides detailed reasoning for its predictions.
 
+## 🌐 Web Interface
+
+**Try the live web interface:** [https://yangjunahn.github.io/kmi/](https://yangjunahn.github.io/kmi/)
+
+The web interface allows anyone to:
+- Enter marine accident descriptions
+- Get real-time severity predictions using our trained ML models
+- View confidence scores and probability distributions
+- Try example accident scenarios
+
+### API Endpoint
+The web interface connects to our live API at: `http://210.125.100.136:5000/classify`
+
 ## Features
 
 - **TF-IDF based classification**: Uses TF-IDF vectorization with Random Forest classifier
@@ -11,6 +24,8 @@ This project implements an AI model for classifying marine accident severity bas
 - **Detailed reasoning**: Provides explanations for severity predictions
 - **Multiple model comparison**: Compare TF-IDF and BERT approaches
 - **Interactive interface**: User-friendly command-line interface for testing
+- **Web interface**: Browser-based interface accessible to anyone
+- **REST API**: Public API endpoint for integration with other systems
 - **Comprehensive evaluation**: Detailed analysis of model performance
 
 ## Requirements
@@ -166,7 +181,11 @@ marine_accident_classification/
 ├── test_marine_classifier.py        # Test suite
 ├── enhanced_marine_classifier.py    # Enhanced test suite
 ├── marine_accident_model.py         # Comprehensive model (TF-IDF + BERT)
+├── app.py                          # Flask API server
+├── index.html                      # Web interface
+├── run_api.sh                      # API startup script
 └── README.md                        # This file
+
 ```
 
 ## Model Files Generated
@@ -178,6 +197,30 @@ After training, the following files are created:
 - `*_bert_tokenizer/`: BERT tokenizer files
 - `*_confusion_matrix.png`: Confusion matrix visualization
 
+## API Usage
+
+### Start the API Server
+```bash
+# Make sure virtual environment is activated
+source marine_accident_env/bin/activate
+
+# Start the API server
+./run_api.sh
+```
+
+### API Endpoints
+- `GET /` - API documentation
+- `GET /health` - Health check
+- `GET /models` - Model information
+- `POST /classify` - Classify accident severity
+
+### Example API Call
+```bash
+curl -X POST http://210.125.100.136:5000/classify \
+  -H "Content-Type: application/json" \
+  -d '{"description": "Collision between two cargo ships in the harbor resulting in major hull damage and oil spill"}'
+```
+
 ## Future Improvements
 
 1. **Data Collection**: Gather more marine accident reports with expert severity assessments
@@ -185,8 +228,8 @@ After training, the following files are created:
 3. **Model Architecture**: Try different transformer models (RoBERTa, DistilBERT)
 4. **Ensemble Methods**: Combine multiple models for better predictions
 5. **Real-time Processing**: Implement real-time accident description processing
-6. **Web Interface**: Create a web-based interface for easier access
-7. **API Development**: Develop REST API for integration with other systems
+6. **Web Interface**: ✅ Create a web-based interface for easier access
+7. **API Development**: ✅ Develop REST API for integration with other systems
 
 ## Contributing
 
@@ -206,4 +249,4 @@ For questions or contributions, please open an issue in the repository.
 
 ---
 
-**Note**: This system is designed for educational and research purposes. For real-world marine safety applications, always consult with maritime safety experts and follow established protocols and regulations. 
+**Note**: This system is designed for educational and research purposes. For real-world marine safety applications, always consult with maritime safety experts and follow established protocols and regulations.
