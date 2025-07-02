@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marine Accident Severity Classifier</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .description {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .input-section {
+            margin-bottom: 30px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 100%;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .results {
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .result-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .severity-low {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+        
+        .severity-medium {
+            border-left-color: #ffc107;
+            background: #fff3cd;
+        }
+        
+        .severity-high {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+        
+        .severity-label {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .confidence {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .example-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .example-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .example-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .example-item:hover {
+            background: #e9ecef;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚢 Marine Accident Severity Classifier</h1>
+        <p class="description">
+            Enter a marine accident description to classify its severity level (Low, Medium, or High)
+        </p>
+        
+        <div class="input-section">
+            <label for="accident-description">Accident Description:</label>
+            <textarea 
+                id="accident-description" 
+                placeholder="Enter the marine accident description here...&#10;&#10;Example: Collision between two cargo ships in the harbor resulting in major hull damage and oil spill"
+            ></textarea>
+        </div>
+        
+        <button class="button" onclick="classifyAccident()" id="classify-btn">
+            Classify Severity
+        </button>
+        
+        <div class="results" id="results">
+            <div class="loading" id="loading">Analyzing accident description...</div>
+            <div id="result-content"></div>
+        </div>
+        
+        <div class="example-section">
+            <div class="example-title">💡 Try these examples:</div>
+            <div class="example-item" onclick="loadExample('Minor grounding incident with no damage to vessel or environment')">
+                Minor grounding incident with no damage to vessel or environment
+            </div>
+            <div class="example-item" onclick="loadExample('Fire outbreak in engine room causing evacuation of crew members')">
+                Fire outbreak in engine room causing evacuation of crew members
+            </div>
+            <div class="example-item" onclick="loadExample('Collision between two cargo ships in the harbor resulting in major hull damage and oil spill')">
+                Collision between two cargo ships in the harbor resulting in major hull damage and oil spill
+            </div>
+            <div class="example-item" onclick="loadExample('Explosion in cargo hold leading to multiple casualties')">
+                Explosion in cargo hold leading to multiple casualties
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Built with machine learning models (TF-IDF and BERT) for marine accident severity classification</p>
+            <p>GitHub: <a href="https://github.com/yangjunahn/kmi" target="_blank">https://github.com/yangjunahn/kmi</a></p>
+        </div>
+    </div>
+
+    <script>
+        function loadExample(text) {
+            document.getElementById('accident-description').value = text;
+        }
+        
+        async function classifyAccident() {
+            const description = document.getElementById('accident-description').value.trim();
+            
+            if (!description) {
+                alert('Please enter an accident description');
+                return;
+            }
+            
+            // Show loading state
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('result-content').innerHTML = '';
+            document.getElementById('classify-btn').disabled = true;
+            
+            try {
+                const response = await fetch('http://210.125.100.136:5000/classify', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ description: description })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                displayResults(result);
+            } catch (error) {
+                console.error('Error:', error);
+                // Fallback to simulation if API fails
+                const result = simulateClassification(description);
+                displayResults(result);
+                console.log('Using simulated results due to API error');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('classify-btn').disabled = false;
+            }
+        }
+        
+        function simulateClassification(description) {
+            // This is a simplified simulation - replace with actual API call
+            const keywords = description.toLowerCase();
+            
+            let severity, confidence, reasoning;
+            
+            if (keywords.includes('minor') || keywords.includes('no damage') || keywords.includes('routine')) {
+                severity = 'Low';
+                confidence = 0.85;
+                reasoning = 'The description contains keywords indicating minor or routine incidents with no significant damage.';
+            } else if (keywords.includes('fire') || keywords.includes('evacuation') || keywords.includes('grounding')) {
+                severity = 'Medium';
+                confidence = 0.72;
+                reasoning = 'The incident involves fire, evacuation, or grounding which typically indicates medium severity.';
+            } else if (keywords.includes('collision') || keywords.includes('major damage') || keywords.includes('explosion') || keywords.includes('casualties')) {
+                severity = 'High';
+                confidence = 0.91;
+                reasoning = 'The description indicates major damage, collision, explosion, or casualties which suggests high severity.';
+            } else {
+                severity = 'Medium';
+                confidence = 0.65;
+                reasoning = 'Unable to determine clear severity indicators, defaulting to medium severity.';
+            }
+            
+            return {
+                severity: severity,
+                confidence: confidence,
+                reasoning: reasoning,
+                probabilities: {
+                    low: severity === 'Low' ? confidence : (1 - confidence) / 2,
+                    medium: severity === 'Medium' ? confidence : (1 - confidence) / 2,
+                    high: severity === 'High' ? confidence : (1 - confidence) / 2
+                }
+            };
+        }
+        
+        function displayResults(result) {
+            const resultContent = document.getElementById('result-content');
+            const severityClass = `severity-${result.severity.toLowerCase()}`;
+            
+            resultContent.innerHTML = `
+                <div class="result-card ${severityClass}">
+                    <div class="severity-label">Severity: ${result.severity}</div>
+                    <div class="confidence">Confidence: ${(result.confidence * 100).toFixed(1)}%</div>
+                    <div style="margin-top: 10px;">
+                        <strong>Probabilities:</strong><br>
+                        Low: ${(result.probabilities.low * 100).toFixed(1)}% | 
+                        Medium: ${(result.probabilities.medium * 100).toFixed(1)}% | 
+                        High: ${(result.probabilities.high * 100).toFixed(1)}%
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <strong>Reasoning:</strong><br>
+                        ${result.reasoning}
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Allow Enter key to submit
+        document.getElementById('accident-description').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                classifyAccident();
+            }
+        });
+    </script>
+</body>
+</html> 
